@@ -60,3 +60,5 @@ root@OpenWrt:~# cat /dev/ttyUSB0 | grep -vi "^$"
 
 ```
 
+
+The script ```get-P1-counter.sh``` tries to automate this. Warning: there is not always output. The script protects against that.
