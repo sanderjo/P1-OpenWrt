@@ -12,6 +12,15 @@ opkg install kmod-usb-serial-ftdi
 modprobe ftdi_sio
 modprobe usbserial
 ```
+Check:
+```
+root@OpenWrt:~# lsmod | grep ftdi
+ftdi_sio               27856  1 
+usbcore               109781  7 ftdi_sio
+usbserial              18407  4 ftdi_sio
+
+```
+
 Connect the FTDI USB device to the router's USB port
 
 ```
