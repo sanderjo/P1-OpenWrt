@@ -1,5 +1,7 @@
 date > /www/P1/date.txt
 stty 9600 crtscts cs7 parenb -cstopb -echo -F /dev/ttyUSB0
+
+# Let the 'cat' run for 55 seconds, then kill it
 (cat /dev/ttyUSB0  > /tmp/teller5 ) & pid=$! ; (sleep 55 && kill -9 $pid)
 #cat /tmp/teller5 | grep -vi "^$"
 
