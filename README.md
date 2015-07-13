@@ -1,6 +1,7 @@
 # P1-OpenWrt
-Slimme Meter P1 koppelen aan OpenWrt
+Connect Smart Meter's P1 to an OpenWrt
 
+OpenWrt setup for FTDI USB device:
 
 ```
 opkg update
