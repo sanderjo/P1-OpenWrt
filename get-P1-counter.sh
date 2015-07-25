@@ -1,17 +1,25 @@
-date > /www/P1/date.txt
-stty 9600 crtscts cs7 parenb -cstopb -echo -F /dev/ttyUSB0
+date > /www/P1/date-lastrun.txt
+stty 9600 cs7 parenb -cstopb  -F /dev/ttyUSB0
 
-# Let the 'cat' run for 55 seconds, then kill it
-(cat /dev/ttyUSB0  > /tmp/teller5 ) & pid=$! ; (sleep 55 && kill -9 $pid)
-#cat /tmp/teller5 | grep -vi "^$"
+TMPFILE=/tmp/P1-raw-output.txt	# the raw stuff from the USB / P1 port
+MULTIP1FILE=/www/P1/teller5.txt	# cleaned up TMPFILE, to be published too for reference
+RESULTFILE=/www/P1/result.txt 	# control file for humans
+P1FILE=/www/P1/P1.txt		# the beautiful stuff we want
 
-if [ -s /tmp/teller5 ]
+# starting copying stuff from USB port, and kill that process after 55 seconds:
+# Warning: because of the $1, only put ONE command within the () !!!
+(cat /dev/ttyUSB0 > $TMPFILE ) & pid=$! ; (sleep 55 && kill -9 $pid)
+
+# remove strange characters and empty lines:
+cat $TMPFILE | tr -d '\000' | grep -vi "^$" > $MULTIP1FILE 
+
+if [ -s $MULTIP1FILE ]
 then
-	echo "file has some data." > /www/P1/result.txt
-        # do something as file has data
-        cat /tmp/teller5 | grep -vi "^$" | awk ' BEGIN {START=0}  /^\// {START=1}  { if (START==1) print $0 } /^!/ { if (START==1) exit 0 }  '  > /www/P1/P1.txt
-        date >> /www/P1/P1.txt
+	echo "file has some data." > $RESULTFILE
+	# Find first '/' (=start of telegram) and print everything starting from there
+	# Find '!' (=end of telegram), and start everyting before
+        cat $MULTIP1FILE | sed -n '/\//,200 p' | sed -n '1,/\!/ p' > $P1FILE
+        date >> $P1FILE
 else
-	echo "file is empty." > /www/P1/result.txt
-        # do something as file is empty 
+	echo "file is empty." > $RESULTFILE
 fi
